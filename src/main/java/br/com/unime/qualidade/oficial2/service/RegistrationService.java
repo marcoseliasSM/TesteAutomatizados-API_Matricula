@@ -120,7 +120,27 @@ public class RegistrationService {
                         .build())
                 .build();
 
-        return List.of(registration1, registration2, registration3, registration4, registration5);
+        Registration registration6 = Registration
+                .builder()
+                .id("1113499")
+                .courseName("")
+                .tuition(Tuition
+                        .builder()
+                        .amount(0.00)
+                        .formattedAmount("R$ 0,00")
+                        .dueDate(null)
+                        .status(Status.EM_DIA)
+                        .build())
+                .student(Student
+                        .builder()
+                        .firstName("")
+                        .lastName("")
+                        .birthDate(null)
+                        .cpf("76598765412")
+                        .build())
+                .build();
+
+        return List.of(registration1, registration2, registration3, registration4, registration5, registration6);
     }
 
     public boolean registrationHasDelayedPayment(Registration registration) {
