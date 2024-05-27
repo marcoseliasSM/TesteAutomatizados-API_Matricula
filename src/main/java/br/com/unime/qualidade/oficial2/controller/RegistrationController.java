@@ -4,6 +4,7 @@ import br.com.unime.qualidade.oficial2.entity.Registration;
 import br.com.unime.qualidade.oficial2.exception.RegistrationDeletedException;
 import br.com.unime.qualidade.oficial2.exception.RegistrationInvalidException;
 import br.com.unime.qualidade.oficial2.exception.RegistrationNotFoundException;
+import br.com.unime.qualidade.oficial2.exception.RegistrationPaidDelayedException;
 import br.com.unime.qualidade.oficial2.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,8 +26,9 @@ public class RegistrationController {
     ) throws
             RegistrationDeletedException,
             RegistrationNotFoundException,
-            RegistrationInvalidException {
-        Registration registration = registrationService.getRegistrationById(matricula);
+            RegistrationInvalidException,
+            RegistrationPaidDelayedException {
+        Registration registration = registrationService.getById(matricula);
 
         return ResponseEntity.ok(registration);
     }

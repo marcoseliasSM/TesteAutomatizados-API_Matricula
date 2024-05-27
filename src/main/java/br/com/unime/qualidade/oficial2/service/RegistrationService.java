@@ -7,10 +7,10 @@ import br.com.unime.qualidade.oficial2.enums.Status;
 import br.com.unime.qualidade.oficial2.exception.RegistrationDeletedException;
 import br.com.unime.qualidade.oficial2.exception.RegistrationInvalidException;
 import br.com.unime.qualidade.oficial2.exception.RegistrationNotFoundException;
+import br.com.unime.qualidade.oficial2.exception.RegistrationPaidDelayedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -19,9 +19,7 @@ import java.util.regex.Pattern;
 @Service
 public class RegistrationService {
 
-    private final List<Registration> registrationList = new ArrayList<>();
-
-    public RegistrationService() {
+    public List<Registration> getAll() {
         Registration registration1 = Registration
                 .builder()
                 .id("4653421")
@@ -122,37 +120,7 @@ public class RegistrationService {
                         .build())
                 .build();
 
-        registrationList.addAll(
-                List.of(registration1, registration2, registration3, registration4, registration5)
-        );
-    }
-
-    public Registration getRegistrationById(String id) throws RegistrationDeletedException, RegistrationNotFoundException, RegistrationInvalidException {
-        Registration registration = getById(id);
-
-        // Se a matrícula está com pagamento atrasado...
-        if (registrationHasDelayedPayment(registration)) {
-            throw new RegistrationNotFoundException();
-        }
-
-        // Se a matrícula foi excluída...
-        if (registrationIsDeleted(registration)) {
-            throw new RegistrationDeletedException();
-        }
-
-        // Se a matrícula possui bolsa de estudos 100%...
-        if (registrationHasScholarship(registration)) {
-            registration.getTuition().setAmount(0.00);
-            registration.getTuition().setFormattedAmount("R$ 0.00");
-            registration.getTuition().setDueDate(null);
-        }
-
-        // Se a matrícula tem pagamento concluído
-        if (registrationHasPaidMonthlyFees(registration)) {
-            registration.getTuition().setDueDate(null);
-        }
-
-        return registration;
+        return List.of(registration1, registration2, registration3, registration4, registration5);
     }
 
     public boolean registrationHasDelayedPayment(Registration registration) {
@@ -179,21 +147,45 @@ public class RegistrationService {
         return matcher.matches();
     }
 
-    private Registration getById(String id) throws RegistrationDeletedException, RegistrationInvalidException {
+    public Registration getById(String id) throws RegistrationDeletedException, RegistrationInvalidException, RegistrationNotFoundException, RegistrationPaidDelayedException {
         // Se a matrícula é inválida...
         if (!registrationNumberIsValid(id)) {
             throw new RegistrationInvalidException();
         }
 
-        Optional<Registration> registrationOptional = registrationList.stream().filter(
+        Optional<Registration> registrationOptional = getAll().stream().filter(
                 (Registration registration) -> registration.getId().equals(id)
         ).findFirst();
 
         if(registrationOptional.isEmpty()) {
+            throw new RegistrationNotFoundException();
+        }
+
+        Registration registration = registrationOptional.get();
+
+        // Se a matrícula está com pagamento atrasado...
+        if (registrationHasDelayedPayment(registration)) {
+            throw new RegistrationPaidDelayedException();
+        }
+
+        // Se a matrícula foi excluída...
+        if (registrationIsDeleted(registration)) {
             throw new RegistrationDeletedException();
         }
 
-        return registrationOptional.get();
+        // Se a matrícula possui bolsa de estudos 100%...
+        if (registrationHasScholarship(registration)) {
+            registration.getTuition().setAmount(0.00);
+            registration.getTuition().setFormattedAmount("R$ 0.00");
+            registration.getTuition().setDueDate(null);
+        }
+
+        // Se a matrícula tem pagamento concluído
+        if (registrationHasPaidMonthlyFees(registration)) {
+            registration.getTuition().setDueDate(null);
+        }
+
+        return registration;
     }
 
 }
