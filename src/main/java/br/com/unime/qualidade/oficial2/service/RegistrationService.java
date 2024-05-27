@@ -86,10 +86,10 @@ public class RegistrationService {
                 .courseName("Engenharia Elétrica")
                 .tuition(Tuition
                         .builder()
-                        .amount(0.00)
-                        .formattedAmount("R$ 0,00")
+                        .amount(1000.00)
+                        .formattedAmount("R$ 1000,00")
                         .dueDate(null)
-                        .status(Status.EM_DIA)
+                        .status(Status.PAGAMENTO_EM_ATRASO)
                         .build())
                 .student(Student
                         .builder()
@@ -109,7 +109,7 @@ public class RegistrationService {
                         .amount(990.00)
                         .formattedAmount("R$ 990,00")
                         .dueDate(LocalDate.of(2024, 6, 10))
-                        .status(Status.EM_DIA)
+                        .status(Status.MATRICULA_EXCLUIDA)
                         .build())
                 .student(Student
                         .builder()
