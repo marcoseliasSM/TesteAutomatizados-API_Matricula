@@ -21,7 +21,7 @@ Certifique-se de ter as seguintes ferramentas e dependências instaladas em seu 
 
 # Executar os testes
 - Clonar repositório:
-git clone https://github.com/seu-usuario/seu-repositorio.git
+git clone https://github.com/marcoseliasSM/TesteAutomatizados-API_Matricula.git
 - Instalar as dependências do projeto, importante ressaltar para executar o comando é necessário está no diretorio do projeto:
 npm install
 - Abrir o Cypress:
